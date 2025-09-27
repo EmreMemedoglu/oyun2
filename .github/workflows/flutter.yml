@@ -1,0 +1,37 @@
+name: Build Flutter APK
+
+# Workflow hangi durumda çalışacak
+on:
+  push:
+    branches:
+      - main   # main branch’e her push yaptığında çalışır
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Repo’yu çek
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Flutter kurulumu
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
+      # 3. Bağımlılıkları yükle
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. APK’yı oluştur
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 5. APK’yı artifacts olarak yükle (indirebilirsin)
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
